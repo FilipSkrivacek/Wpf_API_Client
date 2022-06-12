@@ -1,0 +1,164 @@
+﻿<Window x:Class="wpf_api.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:wpf_api"
+        xmlns:vm="clr-namespace:wpf_api.ViewModels"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded">
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
+    
+    <DockPanel>
+
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_Refresh Products ⟳" Command="{Binding ReloadCommand}" Background="#FF9D20" />
+            <MenuItem Header="_Refresh Franchises ⟳" Command="{Binding ReloadCommandFranchise}" Background="#009BFF" />
+        </Menu>
+
+        <Grid>
+            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+
+                <DataGrid ItemsSource="{Binding Franchises}" SelectedItem="{Binding PickedFranchise}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" Grid.Row="0" IsReadOnly="True" >
+                    <DataGrid.Resources>
+                        <DataTemplate x:Key="ActionTemplate">
+                            <StackPanel Orientation="Horizontal">
+                                <Button Command="{Binding DataContext.RemoveCommandFranchise, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" CommandParameter="{Binding Id}" Background="red">Remove</Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGrid.Resources>
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Název" Binding="{Binding Name}" />
+                        <DataGridTextColumn Header="Založení" Binding="{Binding YearOfCreation}" />
+                        <DataGridTextColumn Header="Původ" Binding="{Binding Country}" />
+                        <DataGridTextColumn Header="FranchiseId" Binding="{Binding Id}" />
+                        <DataGridTemplateColumn Header="Akce" CellTemplate="{StaticResource ActionTemplate}"></DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+
+
+                <DataGrid ItemsSource="{Binding Products}" SelectedItem="{Binding PickedProduct}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" Grid.Row="1" >
+                    <DataGrid.Resources>
+                        <DataTemplate x:Key="ActionTemplate">
+                            <StackPanel Orientation="Horizontal">
+                                <Button Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" CommandParameter="{Binding Id}" Background="Red" >Remove</Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGrid.Resources>
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Název" Binding="{Binding Name}" />
+                        <DataGridTextColumn Header="Cena" Binding="{Binding Price}" />
+                        <DataGridTextColumn Header="Kalorie" Binding="{Binding Calories}" />
+                        <DataGridTextColumn Header="Váha" Binding="{Binding Weight}" />
+                        <DataGridTextColumn Header="FranchiseId" Binding="{Binding FranchiseId}" />
+                        <DataGridTemplateColumn Header="Akce" CellTemplate="{StaticResource ActionTemplate}"></DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+            </Grid>
+                   
+            <ScrollViewer Grid.Column="1">
+                <TabControl>
+
+                    <TabItem Header="Upravit">
+                        <TabControl>
+                            <!--EDITOVAT PRODUKT-->
+                            <TabItem Header="Produkt">
+                                <StackPanel Margin="10">
+                                    <Label HorizontalContentAlignment="Center" FontSize="20">Editovat Produkt</Label>
+                                    <Label>Název</Label>
+                                    <TextBox Text="{Binding PickedProduct.Name}"/>
+                                    <Label>Cena v kč</Label>
+                                    <TextBox Text="{Binding PickedProduct.Price}"/>
+                                    <Label>Kalorie v kcal</Label>
+                                    <TextBox Text="{Binding PickedProduct.Calories}"/>
+                                    <Label>Hmotnost v gramech</Label>
+                                    <TextBox Text="{Binding PickedProduct.Weight}"/>
+                                    <Label></Label>
+                                    <Button Command="{Binding EditCommand}" CommandParameter="{Binding PickedProduct.Id}" Content="Uložit" Background="LawnGreen"/>
+                                </StackPanel>
+                            </TabItem>
+
+                            <!--EDITOVAT FRANCHISE-->
+                            <TabItem Header="Franchise">
+                                <StackPanel Margin="10">
+                                    <Label HorizontalContentAlignment="Center" FontSize="20">Editovat Franchise</Label>
+                                    <Label>Název</Label>
+                                    <TextBox Text="{Binding PickedFranchise.Name}"/>
+                                    <Label>Rok založení</Label>
+                                    <TextBox Text="{Binding PickedFranchise.YearOfCreation}"/>
+                                    <Label>Země původu</Label>
+                                    <TextBox Text="{Binding PickedFranchise.Country}"/>
+
+                                    <Label></Label>
+                                    <Button Command="{Binding EditCommandFranchise}" CommandParameter="{Binding PickedFranchise.Id}" Content="Uložit" Background="LawnGreen"/>
+                                </StackPanel>
+                            </TabItem>
+
+                        </TabControl>
+
+                    </TabItem>
+
+                    <TabItem Header="Vytvořit">
+
+                        <TabControl>
+                            <!--VYTVOŘIT PRODUKT-->
+                            <TabItem Header="Produkt">
+                                <StackPanel Margin="10">
+                                    <Label HorizontalContentAlignment="Center" FontSize="20">Vytvořit Produkt</Label>
+                                    <Label>Název</Label>
+                                    <TextBox Text="{Binding NewProduct.Name}"/>
+                                    <Label>Cena</Label>
+                                    <TextBox Text="{Binding NewProduct.Price}"/>
+                                    <Label>Kalorie</Label>
+                                    <TextBox Text="{Binding NewProduct.Calories}"/>
+                                    <Label>Hmotnost</Label>
+                                    <TextBox Text="{Binding NewProduct.Weight}"/>
+                                    
+                                    <Label>Franchise Id</Label>
+                                    <TextBox Text="{Binding NewProduct.FranchiseId}"/>
+                                    
+                                    <Button Command="{Binding AddCommand}" Margin="0,10" Content="Vytvořit" Background="LawnGreen"/>
+                                </StackPanel>
+                            </TabItem>
+
+
+                            <!--VYTVOŘIT FRANCHISE-->
+                            <TabItem Header="Franchise">
+                                <StackPanel Margin="10">
+                                    <Label HorizontalContentAlignment="Center" FontSize="20">Vytvořit Franchise</Label>
+                                    <Label>Název</Label>
+                                    <TextBox Text="{Binding NewFranchise.Name}"/>
+                                    <Label>Rok založení</Label>
+                                    <TextBox Text="{Binding NewFranchise.YearOfCreation}"/>
+                                    <Label>Země původu</Label>
+                                    <TextBox Text="{Binding NewFranchise.Country}"/>
+                                    <Label></Label>
+                                    <Button Command="{Binding AddCommandFranchise}" Content="Vytvořit" Background="LawnGreen"/>
+                                </StackPanel>
+                            </TabItem>
+                        </TabControl>
+                    </TabItem>
+
+                </TabControl>
+            </ScrollViewer>
+            
+        </Grid>
+    </DockPanel>
+</Window>
