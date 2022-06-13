@@ -25,7 +25,7 @@ namespace wpf_api
     {
 
         private MainViewModel vm;
-        internal MainWindow()
+        private MainWindow()
         {          
             InitializeComponent();
             vm = (MainViewModel)DataContext;
